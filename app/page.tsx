@@ -1,65 +1,200 @@
-import Image from "next/image";
+"use client";
 
+/* ============================================================================
+   IMPORT ZONE — (All Dependencies Centralized for Clarity)
+   A true engineer keeps imports clean, predictable, and structured.
+=============================================================================== */
+import ContentSection from "@/components/content-1";
+import Features from "@/components/features-3";
+import Footer from "@/components/footer";
+import HeroSection from "@/components/hero-section";
+import IntegrationsSection from "@/components/integrations-8";
+import Pricing from "@/components/pricing";
+import WallOfLoveSection from "@/components/testimonials";
+
+import Carousel from "@/components/ui/carousel";
+
+// Motion engine & icons
+import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
+
+/* ============================================================================
+   HOME PAGE — MASTER LAYOUT
+   The root of your site. Every section in perfect order.
+   Clean. Predictable. Elegant.
+=============================================================================== */
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* 01 + 02 — Hero + Features (shared background) */}
+      <section className="relative overflow-x-hidden bg-white dark:bg-black">
+        {/* 01 — Hero section (Top Fold) */}
+        <HeroSection />
+
+        {/* 02 — Main Features */}
+        <Features />
+        {/* 03 — Content / About */}
+        <ContentSection />
+
+        {/* 04 — Tools & Integrations */}
+        <IntegrationsSection />
+
+        {/* 05 — Animated Stripes Banner */}
+        <StripesAnim />
+
+        {/* 06 — Portfolio Showcase (Carousel) */}
+        <CarouselDemo />
+
+        <Pricing />
+
+        <WallOfLoveSection />
+
+        <Footer />
+      </section>
+    </>
+  );
+}
+
+/* ============================================================================
+   CAROUSEL SECTION — "OUR WORK"
+   – Ultra-clean display of previous work
+   – Professional heading
+   – Dark/Light mode adaptive
+=============================================================================== */
+export function CarouselDemo() {
+  const slideData = [
+    {
+      title: "Premium Website Designs",
+      button: "View Project",
+      src: "https://images.unsplash.com/photo-1521133573892-e44906baee46?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      title: "Branding & Creative Identity",
+      button: "View Project",
+      src: "https://images.unsplash.com/photo-1607083206968-13611e3d76db?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      title: "Shopify & Ecommerce Stores",
+      button: "View Project",
+      src: "https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      title: "Ad Creatives & Marketing Assets",
+      button: "View Project",
+      src: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      title: "Mobile UI/UX Design",
+      button: "View Project",
+      src: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?q=80&w=3540&auto=format&fit=crop",
+    },
+    {
+      title: "Social Media Visuals",
+      button: "View Project",
+      src: "https://images.unsplash.com/photo-1508898578281-774ac4893c0c?q=80&w=3540&auto=format&fit=crop",
+    },
+  ];
+
+  return (
+    <div className="relative overflow-hidden w-full h-full py-20 bg-white dark:bg-black">
+
+      {/* ======= SECTION HEADING ======= */}
+      <div className="text-center mb-12 space-y-3">
+        <h2
+          className="
+            text-4xl md:text-5xl font-extrabold tracking-tight
+          "
+        >
+          Our Work
+        </h2>
+
+        <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
+          A showcase of the brands, businesses, and creators we’ve helped grow.
+        </p>
+      </div>
+
+      {/* ======= REUSABLE CAROUSEL COMPONENT ======= */}
+      <Carousel slides={slideData} />
+    </div>
+  );
+}
+
+
+/* ============================================================================
+   STRIPES ANIMATION — (Eye-Candy Banner)
+   – Modern, animated diagonal stripes
+   – Smooth parallax scrolling illusion
+=============================================================================== */
+function StripesAnim() {
+  return (
+    <div className="relative w-full overflow-hidden h-[330px] bg-white dark:bg-black">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        
+        {/* Lower black stripe (unchanged) */}
+        <div className="absolute rotate-[6deg] translate-y-[25px]">
+          <Stripe bg="black" text="white" speed={55} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Upper stripe — CHANGED to yellow + blurred glow */}
+        <div className="absolute rotate-[-6deg] translate-y-[-25px]">
+          <div className="relative">
+            {/* Blurred Glow */}
+            <div className="absolute inset-0 -z-10 blur-3xl bg-yellow-400/40 rounded-xl" />
+            
+            {/* The actual stripe */}
+            <Stripe bg="#facc15" text="black" speed={65} />
+          </div>
         </div>
-      </main>
+
+      </div>
+    </div>
+  );
+}
+
+
+/* ============================================================================
+   SINGLE STRIPE COMPONENT — reusable
+=============================================================================== */
+function Stripe({
+  bg,
+  text,
+  speed,
+}: {
+  bg: string;
+  text: string;
+  speed: number;
+}) {
+  return (
+    <div
+      className="
+        w-[180%] py-6 px-10
+        overflow-hidden whitespace-nowrap
+        rounded-xl shadow-xl
+      "
+      style={{ backgroundColor: bg }}
+    >
+      <motion.div
+        className="flex gap-10 text-2xl font-bold uppercase tracking-wide"
+        style={{ color: text }}
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{
+          repeat: Infinity,
+          ease: "linear",
+          duration: speed,
+        }}
+      >
+        {Array(10)
+          .fill(0)
+          .map((_, i) => (
+            <span key={i} className="flex items-center gap-4">
+              <Sparkles className="size-5" /> Mobile App Development
+              <Sparkles className="size-5" /> Product Consulting
+              <Sparkles className="size-5" /> Web Design
+              <Sparkles className="size-5" /> Graphic Design
+              <Sparkles className="size-5" /> SEO
+            </span>
+          ))}
+      </motion.div>
     </div>
   );
 }
