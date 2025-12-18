@@ -30,9 +30,6 @@ export default function Home() {
       <section className="relative overflow-x-hidden bg-white dark:bg-black">
         {/* 01 — Hero section (Top Fold) */}
         <HeroSection />
-
-        {/* 02 — Main Features */}
-        <Features />
         {/* 03 — Content / About */}
         <ContentSection />
 
@@ -45,7 +42,6 @@ export default function Home() {
         {/* 06 — Portfolio Showcase (Carousel) */}
         <CarouselDemo />
 
-        <Pricing />
 
         <WallOfLoveSection />
 

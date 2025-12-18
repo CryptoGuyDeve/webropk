@@ -9,3 +9,11 @@ export const users = pgTable("users", {
   skills: text("skills"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name"),
+  password: text("password"),
+  createdAt: timestamp("created_at").defaultNow(),
+});

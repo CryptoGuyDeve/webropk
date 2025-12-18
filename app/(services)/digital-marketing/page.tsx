@@ -189,11 +189,11 @@ export default function DigitalMarketingPage() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+        </div >
+      </section >
 
       {/* ==================== REQUIREMENTS ==================== */}
-      <section className="py-20">
+      < section className="py-20" >
         <div className="container px-4 mx-auto">
           <div className="flex flex-col md:flex-row gap-12 items-center">
             <div className="md:w-1/2">
@@ -233,10 +233,10 @@ export default function DigitalMarketingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* ==================== PACKAGES ==================== */}
-      <section className="py-20 bg-secondary/30" id="packages">
+      < section className="py-20 bg-secondary/30" id="packages" >
         <div className="container px-4 mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Growth Packages</h2>
@@ -350,10 +350,10 @@ export default function DigitalMarketingPage() {
             </Card>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* ==================== CTA ==================== */}
-      <section className="py-20 bg-zinc-950 text-white overflow-hidden relative">
+      < section className="py-20 bg-zinc-950 text-white overflow-hidden relative" >
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100"></div>
         <div className="container px-4 mx-auto relative z-10 text-center">
           <h2 className="text-3xl md:text-5xl font-bold mb-6">
@@ -369,7 +369,7 @@ export default function DigitalMarketingPage() {
             Build My Growth Plan <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
-      </section>
-    </div>
+      </section >
+    </div >
   );
 }

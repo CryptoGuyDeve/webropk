@@ -19,7 +19,7 @@ if (!dbUrl) {
 
 async function testConnection() {
   try {
-    const sql = neon(dbUrl);
+    const sql = neon(dbUrl!);
     const result = await sql`SELECT 1 as result`;
     console.log("✅ Successfully connected to database! Result:", result);
   } catch (e) {

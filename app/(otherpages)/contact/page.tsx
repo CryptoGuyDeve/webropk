@@ -1,176 +1,213 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone, Send, MessageSquare } from "lucide-react";
+import { Mail, Phone, Send, Globe, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
+
+// Initialize EmailJS with Public Key
+// NOTE: Ideally this should be in useEffect, but we can access it during send just fine.
+// Make sure keys are prefixed with NEXT_PUBLIC_ in .env.local
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, ease: "easeOut" }
+};
+
+const stagger = {
+  animate: { transition: { staggerChildren: 0.1 } }
+};
 
 export default function ContactPage() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formRef.current) return;
+
+    // Check for Service/Template IDs
+    if (
+      !process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ||
+      !process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ||
+      !process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+    ) {
+      toast.error("Configuration Error: Missing EmailJS keys in .env.local");
+      console.error("Missing keys. Please add NEXT_PUBLIC_EMAILJS_SERVICE_ID, NEXT_PUBLIC_EMAILJS_TEMPLATE_ID, and NEXT_PUBLIC_EMAILJS_PUBLIC_KEY");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      );
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      formRef.current.reset();
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      toast.error("Failed to send message. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* ================= HERO SECTION (Light Theme) ================= */}
-      <section className="relative pt-32 pb-20 bg-gradient-to-b from-orange-50/50 to-white">
-        <div className="container px-4 mx-auto text-center">
+    <div className="min-h-screen bg-white text-black selection:bg-yellow-200 overflow-hidden relative">
+
+      {/* ================= BACKGROUND ELEMENTS ================= */}
+      {/* Subtle Yellow Glow */}
+      <div className="absolute top-[-5%] right-[-5%] w-[30%] h-[30%] bg-yellow-100/40 blur-[100px] rounded-full -z-10" />
+
+      {/* --- Header Section --- */}
+      <header className="relative pt-24 pb-12 border-b border-zinc-100">
+        <div className="container px-6 mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
+            className="max-w-4xl"
           >
-            <Badge
-              variant="outline"
-              className="mb-6 px-4 py-1 border-orange-200 bg-orange-50 text-orange-700 rounded-full mx-auto w-fit"
-            >
-              Get In Touch
+            <Badge className="mb-6 px-3 py-1 border-black bg-yellow-400 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none font-bold uppercase tracking-tighter">
+              <Zap className="w-3 h-3 mr-2 fill-black" />
+              Let's Work Together
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-zinc-900">
-              Let's Build Something <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">
-                Extraordinary
-              </span>
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none uppercase">
+              Ready to <br />
+              <span className="text-white bg-black px-2">Ignite</span> your brand?
             </h1>
-            <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
-              Have a project in mind? Looking for a partnership? Just want to
-              say hi? We're all ears.
+            <p className="mt-8 text-xl text-zinc-500 max-w-xl leading-relaxed font-medium">
+              We specialize in high-performance digital solutions. Drop a message below to start the engine.
             </p>
           </motion.div>
         </div>
-      </section>
+      </header>
 
-      {/* ================= CONTACT CONTENT ================= */}
-      <section className="container px-4 mx-auto mt-10">
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Left: Contact Info */}
+      <main className="container px-6 mx-auto py-20">
+        <div className="grid lg:grid-cols-12 gap-16 items-start">
+
+          {/* --- Left: Contact Info (Bold Minimalism) --- */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-8"
+            variants={stagger}
+            initial="initial"
+            animate="animate"
+            className="lg:col-span-4 space-y-12"
           >
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
-              <div className="space-y-6">
-                <Card className="p-6 flex items-start space-x-4 border-l-4 border-l-orange-500 bg-white/50 backdrop-blur-sm">
-                  <div className="bg-orange-100 p-3 rounded-full text-orange-600">
-                    <Mail className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Email Us</h3>
-                    <p className="text-zinc-500">contact@webropk.com</p>
-                    <p className="text-zinc-500">support@webropk.com</p>
-                  </div>
-                </Card>
-
-                <Card className="p-6 flex items-start space-x-4 border-l-4 border-l-blue-500 bg-white/50 backdrop-blur-sm">
-                  <div className="bg-blue-100 p-3 rounded-full text-blue-600">
-                    <Phone className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Call Us</h3>
-                    <p className="text-zinc-500">+92 300 1234567</p>
-                    <p className="text-zinc-500">Mon-Fri from 9am to 6pm</p>
-                  </div>
-                </Card>
-
-                <Card className="p-6 flex items-start space-x-4 border-l-4 border-l-green-500 bg-white/50 backdrop-blur-sm">
-                  <div className="bg-green-100 p-3 rounded-full text-green-600">
-                    <MessageSquare className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">Live Chat</h3>
-                    <p className="text-zinc-500">
-                      Available on WhatsApp & Telegram
-                    </p>
-                    <p className="text-green-600 font-medium">Online Now</p>
-                  </div>
-                </Card>
+            <motion.section variants={fadeInUp}>
+              <h2 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-400 mb-8">Contact Details</h2>
+              <div className="space-y-8">
+                <div className="group cursor-pointer">
+                  <p className="text-xs font-bold text-yellow-500 uppercase mb-1">Email</p>
+                  <p className="text-2xl font-bold group-hover:underline decoration-yellow-400 underline-offset-4 transition-all">hello@webropk.com</p>
+                </div>
+                <div className="group cursor-pointer">
+                  <p className="text-xs font-bold text-yellow-500 uppercase mb-1">Phone</p>
+                  <p className="text-2xl font-bold group-hover:underline decoration-yellow-400 underline-offset-4 transition-all">+92 300 1234567</p>
+                </div>
               </div>
-            </div>
+            </motion.section>
 
-            <div className="bg-zinc-900 text-white p-8 rounded-3xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500 blur-[80px] opacity-40"></div>
-              <h3 className="text-xl font-bold mb-2">Office Headquarters</h3>
-              <p className="text-zinc-400 mb-6">
-                123 Tech Avenue, Innovation Park,
-                <br />
+            <motion.section variants={fadeInUp} className="p-8 bg-yellow-400 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative group">
+              <Globe className="w-10 h-10 mb-6 text-black" />
+              <h3 className="text-xl font-black uppercase mb-2">Our Studio</h3>
+              <p className="text-black/80 font-medium mb-6">
+                123 Innovation Park,<br />
                 Lahore, Pakistan
               </p>
-              <Button variant="secondary" className="w-full">
-                <MapPin className="mr-2 w-4 h-4" /> View Map
+              <Button variant="outline" className="w-full border-black bg-transparent hover:bg-black hover:text-white rounded-none font-bold uppercase transition-all">
+                Find Us on Maps
               </Button>
-            </div>
+            </motion.section>
           </motion.div>
 
-          {/* Right: Form */}
+          {/* --- Right: The Professional Form --- */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-8"
           >
-            <Card className="p-8 shadow-xl border-t-8 border-t-zinc-900">
-              <h2 className="text-2xl font-bold mb-6">Send a Message</h2>
-              <form className="space-y-6">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">First Name</label>
-                    <Input
-                      placeholder="John"
-                      className="bg-zinc-50 border-zinc-200 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Last Name</label>
-                    <Input
-                      placeholder="Doe"
-                      className="bg-zinc-50 border-zinc-200 focus:ring-orange-500"
-                    />
-                  </div>
-                </div>
+            <div className="p-8 md:p-14 bg-white border border-zinc-200 shadow-[20px_20px_60px_#bebebe,-20px_-20px_60px_#ffffff] rounded-3xl relative">
+              <form ref={formRef} onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-12">
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Email Address</label>
+                <div className="space-y-2 group">
+                  <label className="text-xs font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-black transition-colors">Name</label>
                   <Input
-                    placeholder="john@example.com"
-                    type="email"
-                    className="bg-zinc-50 border-zinc-200 focus:ring-orange-500"
+                    name="from_name"
+                    required
+                    placeholder="Your Name"
+                    className="border-0 border-b-2 border-zinc-100 rounded-none px-0 shadow-none focus-visible:ring-0 focus-visible:border-yellow-400 transition-all placeholder:text-zinc-300 text-lg py-6 bg-transparent font-bold"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Service Interested In
-                  </label>
-                  <select className="flex h-10 w-full rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                    <option>Select a service...</option>
-                    <option>Shopify Store Creation</option>
-                    <option>Marketing Campaigns</option>
-                    <option>Web Development</option>
-                    <option>Other</option>
+                <div className="space-y-2 group">
+                  <label className="text-xs font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-black transition-colors">Email Address</label>
+                  <Input
+                    name="from_email"
+                    required
+                    type="email"
+                    placeholder="email@example.com"
+                    className="border-0 border-b-2 border-zinc-100 rounded-none px-0 shadow-none focus-visible:ring-0 focus-visible:border-yellow-400 transition-all placeholder:text-zinc-300 text-lg py-6 bg-transparent font-bold"
+                  />
+                </div>
+
+                <div className="md:col-span-2 space-y-2 group">
+                  <label className="text-xs font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-black transition-colors">Interest</label>
+                  <select
+                    name="interest"
+                    className="w-full border-0 border-b-2 border-zinc-100 rounded-none px-0 py-6 bg-transparent focus:outline-none focus:border-yellow-400 transition-all text-zinc-600 text-lg font-bold appearance-none cursor-pointer"
+                  >
+                    <option value="Web Development">Web Development</option>
+                    <option value="UI/UX Design">UI/UX Design</option>
+                    <option value="Marketing Strategy">Marketing Strategy</option>
                   </select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Message</label>
+                <div className="md:col-span-2 space-y-2 group">
+                  <label className="text-xs font-black uppercase tracking-widest text-zinc-400 group-focus-within:text-black transition-colors">Project Brief</label>
                   <Textarea
-                    placeholder="Tell us about your project..."
-                    className="min-h-[150px] bg-zinc-50 border-zinc-200 focus:ring-orange-500"
+                    name="message"
+                    required
+                    placeholder="Tell us about your goals..."
+                    className="min-h-[120px] border-0 border-b-2 border-zinc-100 rounded-none px-0 shadow-none focus-visible:ring-0 focus-visible:border-yellow-400 transition-all resize-none placeholder:text-zinc-300 text-lg py-4 bg-transparent font-bold"
                   />
                 </div>
 
-                <Button
-                  size="lg"
-                  className="w-full bg-zinc-900 hover:bg-zinc-800 text-white"
-                >
-                  Send Message <Send className="ml-2 w-4 h-4" />
-                </Button>
+                <div className="md:col-span-2 pt-4">
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="h-16 px-12 bg-black text-white rounded-xl hover:bg-yellow-400 hover:text-black transition-all duration-300 group shadow-lg text-lg font-black uppercase tracking-tighter w-full md:w-auto"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          Sending... <Loader2 className="ml-3 w-5 h-5 animate-spin" />
+                        </>
+                      ) : (
+                        <>
+                          Fire Message <Send className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
+                </div>
               </form>
-            </Card>
+            </div>
           </motion.div>
         </div>
-      </section>
+      </main>
     </div>
   );
 }

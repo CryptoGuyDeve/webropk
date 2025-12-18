@@ -80,7 +80,7 @@ export default function ContentSection() {
             <FadeUp>
               <p className="text-muted-foreground">
                 Running a business is already tough — websites breaking,
-                marketing failing, zero leads, pressure everywhere.  
+                marketing failing, zero leads, pressure everywhere.
                 <span className="text-accent-foreground font-bold">
                   {" "}WeBroPk takes that stress off your shoulders.
                 </span>
@@ -103,7 +103,7 @@ export default function ContentSection() {
               <blockquote className="border-l-4 pl-4">
                 <p>
                   “Before WeBroPk, every day felt like a new problem — slow
-                  website, clients not coming in, zero online presence.  
+                  website, clients not coming in, zero online presence.
                   <span className="font-semibold">
                     {" "}They didn’t just fix my problems; they rebuilt my
                     confidence.
@@ -132,7 +132,13 @@ export default function ContentSection() {
 /* ---------------------------------------- */
 /* ✨ Small Fade-Up Component */
 /* ---------------------------------------- */
-const FadeUp = ({ children, className = "" }) => (
+const FadeUp = ({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
   <motion.div
     className={className}
     variants={{
