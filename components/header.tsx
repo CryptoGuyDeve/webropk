@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useScroll, motion } from "motion/react";
 
@@ -50,7 +50,7 @@ export const HeroHeader = () => {
           className={cn(
             "mx-auto flex w-full max-w-7xl items-center justify-between rounded-full border border-zinc-200/70 bg-white/80 px-4 backdrop-blur-xl transition-all duration-300 dark:border-zinc-800/70 dark:bg-zinc-950/80 lg:px-6",
             scrolled &&
-              "bg-white/90 shadow-md dark:bg-zinc-950/90"
+            "bg-white/90 shadow-md dark:bg-zinc-950/90"
           )}
         >
           <motion.div
@@ -134,24 +134,39 @@ export const HeroHeader = () => {
             {/* RIGHT BUTTONS */}
             <div className="hidden lg:flex items-center gap-3">
               {session ? (
-                <Button
-                  asChild
-                  size="sm"
-                  className={cn(
-                    YELLOW_BG,
-                    YELLOW_HOVER,
-                    "text-black",
-                    YELLOW_RING
-                  )}
-                >
-                  <Link
-                    href={`/dashboard/${(
-                      session.user?.name || "me"
-                    ).toLowerCase()}`}
+                <>
+                  <Button
+                    asChild
+                    size="sm"
+                    className={cn(
+                      YELLOW_BG,
+                      YELLOW_HOVER,
+                      "text-black",
+                      YELLOW_RING
+                    )}
                   >
-                    Dashboard
-                  </Link>
-                </Button>
+                    <Link
+                      href={
+                        (session.user as any)?.role === "admin"
+                          ? "/admin"
+                          : (session.user as any)?.role === "staff"
+                            ? "/staff/dashboard"
+                            : `/dashboard/${(
+                              session.user?.name || "me"
+                            ).toLowerCase()}`
+                      }
+                    >
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                  >
+                    Logout
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button asChild variant="outline" size="sm">
@@ -180,12 +195,40 @@ export const HeroHeader = () => {
               <Link href="/about">About</Link>
 
               <div className="flex flex-col gap-3 pt-4">
-                <Button asChild variant="outline">
-                  <Link href="/signin">Login</Link>
-                </Button>
-                <Button asChild className={cn(YELLOW_BG, "text-black")}>
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
+                {session ? (
+                  <>
+                    <Button asChild className={cn(YELLOW_BG, "text-black")}>
+                      <Link
+                        href={
+                          (session.user as any)?.role === "admin"
+                            ? "/admin"
+                            : (session.user as any)?.role === "staff"
+                              ? "/staff/dashboard"
+                              : `/dashboard/${(
+                                session.user?.name || "me"
+                              ).toLowerCase()}`
+                        }
+                      >
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="outline">
+                      <Link href="/signin">Login</Link>
+                    </Button>
+                    <Button asChild className={cn(YELLOW_BG, "text-black")}>
+                      <Link href="/signup">Sign Up</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

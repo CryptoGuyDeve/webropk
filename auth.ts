@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { db } from "@/lib/db";
-import { users, adminUsers } from "@/lib/db/schema";
+import { users, adminUsers, staffUsers } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { authConfig } from "./auth.config";
 
@@ -59,6 +59,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: admin.email,
             name: admin.name,
             role: "admin",
+          } as any;
+
+        return null;
+      },
+    }),
+    Credentials({
+      id: "staff-login",
+      name: "Staff Login",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const parsedCredentials =
+          typeof credentials === "object" ? credentials : {};
+        const email = parsedCredentials.email as string;
+        const password = parsedCredentials.password as string;
+
+        if (!email || !password) return null;
+
+        const staff = await db.query.staffUsers.findFirst({
+          where: eq(staffUsers.email, email),
+        });
+
+        if (!staff || !staff.password) return null;
+
+        const passwordsMatch = await compare(password, staff.password);
+        if (passwordsMatch)
+          return {
+            id: `staff-${staff.id}`,
+            email: staff.email,
+            name: staff.name,
+            role: "staff",
           } as any;
 
         return null;

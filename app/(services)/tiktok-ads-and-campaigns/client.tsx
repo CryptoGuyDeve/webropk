@@ -26,9 +26,39 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useIntercom } from "@/hooks/use-intercom";
 
-// This component is now the client-side implementation, previously named TikTokAdsPage
-function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
+interface ServiceData {
+  heroTitle?: string;
+  heroSubtitle?: string;
+  packages?: any[];
+}
+
+export default function TikTokAdsPageClient({ data }: { data: ServiceData | null }) {
   const { openIntercom, openIntercomWithMessage } = useIntercom();
+
+  const DEFAULT_PACKAGES = [
+    {
+      name: "Starter",
+      price: "$350",
+      description: "Test the waters.",
+      features: ["1 Campaign Setup", "3 Creative Briefs", "Audience Targeting", "Basic Reporting", "Pixel Setup"],
+    },
+    {
+      name: "Viral",
+      price: "$700",
+      description: "Scale with UGC.",
+      features: ["3 Campaigns", "2 UGC Videos Included", "Creator Outreach", "Weekly Optimization", "Spark Ads Strategy"],
+      isPopular: true
+    },
+    {
+      name: "Influencer",
+      price: "$1400",
+      description: "Full brand domination.",
+      features: ["Unlimited Campaigns", "5 UGC Videos/Mo", "Influencer Coordination", "Dedicated Creative Director", "Cross-Platform Re-purposing", "24/7 Support"],
+    }
+  ];
+
+  const packages = data?.packages || DEFAULT_PACKAGES;
+
   return (
     <div className="min-h-screen bg-background selection:bg-pink-100 selection:text-pink-900">
       {/* ==================== HERO SECTION ==================== */}
@@ -55,17 +85,21 @@ function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
               </Badge>
 
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6">
-                Go Viral.{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400">
-                  Sell Out.
-                </span>
+                {data?.heroTitle || (
+                  <>
+                    Go Viral.{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-400">
+                      Sell Out.
+                    </span>
+                  </>
+                )}
               </h1>
 
+
               <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                Capture the attention of millions. We create high-energy,
-                scroll-stopping TikTok campaigns that drive massive traffic and
-                conversions.
+                {data?.heroSubtitle || "Capture the attention of millions. We create high-energy, scroll-stopping TikTok campaigns that drive massive traffic and conversions."}
               </p>
+
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <Button
@@ -268,119 +302,54 @@ function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* BASIC */}
-            <Card className="border-zinc-200 shadow-sm hover:shadow-md transition-all">
-              <CardHeader>
-                <CardTitle className="text-2xl">Starter</CardTitle>
-                <CardDescription>Test the waters.</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$350</span>
-                  <span className="text-muted-foreground">/mo</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {[
-                    "1 Campaign Setup",
-                    "3 Creative Briefs",
-                    "Audience Targeting",
-                    "Basic Reporting",
-                    "Pixel Setup",
-                  ].map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="w-4 h-4 text-gray-400" /> {f}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  className="w-full"
-                  variant="outline"
-                  onClick={() => openIntercomWithMessage("Hi, I'm interested in the Starter TikTok Ads Package ($350/mo).")}
-                >
-                  Select Starter
-                </Button>
-              </CardFooter>
-            </Card>
+            <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {packages.map((pkg: any, i: number) => {
+                const isPopular = pkg.isPopular || (i === 1 && !data?.packages);
+                const CardWrapper = isPopular ?
+                  ({ children }: { children: React.ReactNode }) => (
+                    <Card className="border-cyan-400 shadow-xl relative scale-105 z-10 bg-white dark:bg-zinc-900">
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-cyan-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                        Most Popular
+                      </div>
+                      {children}
+                    </Card>
+                  ) :
+                  ({ children }: { children: React.ReactNode }) => <Card className="border-zinc-200 shadow-sm hover:shadow-md transition-all">{children}</Card>;
 
-            {/* STANDARD */}
-            <Card className="border-cyan-400 shadow-xl relative scale-105 z-10 bg-white dark:bg-zinc-900">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-cyan-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
-                Most Popular
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl text-cyan-600">Viral</CardTitle>
-                <CardDescription>Scale with UGC.</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$700</span>
-                  <span className="text-muted-foreground">/mo</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {[
-                    "3 Campaigns",
-                    "2 UGC Videos Included",
-                    "Creator Outreach",
-                    "Weekly Optimization",
-                    "Spark Ads Strategy",
-                  ].map((f, i) => (
-                    <li
-                      key={i}
-                      className="flex items-center gap-2 text-sm font-medium"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-cyan-500" /> {f}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  className="w-full bg-cyan-500 hover:bg-cyan-600 text-white"
-                  onClick={() => openIntercomWithMessage("Hi, I'm interested in the Viral TikTok Ads Package ($700/mo).")}
-                >
-                  Select Viral
-                </Button>
-              </CardFooter>
-            </Card>
+                const titleColor = isPopular ? "text-cyan-600" : "";
 
-            {/* PREMIUM */}
-            <Card className="border-zinc-200 shadow-sm hover:shadow-md transition-all">
-              <CardHeader>
-                <CardTitle className="text-2xl">Influencer</CardTitle>
-                <CardDescription>Full brand domination.</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$1400</span>
-                  <span className="text-muted-foreground">/mo</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {[
-                    "Unlimited Campaigns",
-                    "5 UGC Videos/Mo",
-                    "Influencer Coordination",
-                    "Dedicated Creative Director",
-                    "Cross-Platform Re-purposing",
-                    "24/7 Support",
-                  ].map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm">
-                      <CheckCircle2 className="w-4 h-4 text-gray-400" /> {f}
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  className="w-full"
-                  variant="outline"
-                  onClick={() => openIntercomWithMessage("Hi, I'm interested in the Influencer TikTok Ads Package ($1400/mo).")}
-                >
-                  Select Influencer
-                </Button>
-              </CardFooter>
-            </Card>
+                return (
+                  <CardWrapper key={i}>
+                    <CardHeader>
+                      <CardTitle className={`text-2xl ${titleColor}`}>{pkg.name}</CardTitle>
+                      <CardDescription>{pkg.description}</CardDescription>
+                      <div className="mt-4">
+                        <span className="text-4xl font-bold">{pkg.price}</span>
+                        <span className="text-muted-foreground">/mo</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-3">
+                        {pkg.features?.map((f: string, j: number) => (
+                          <li key={j} className="flex items-center gap-2 text-sm text-foreground">
+                            <CheckCircle2 className={`w-4 h-4 ${isPopular ? "text-cyan-500" : "text-gray-400"}`} /> {f}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        className={`w-full ${isPopular ? "bg-cyan-500 hover:bg-cyan-600 text-white" : ""}`}
+                        variant={isPopular ? "default" : "outline"}
+                        onClick={() => openIntercomWithMessage(`Hi, I'm interested in the ${pkg.name} TikTok Ads Package (${pkg.price}).`)}
+                      >
+                        Select {pkg.name}
+                      </Button>
+                    </CardFooter>
+                  </CardWrapper>
+                )
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -408,5 +377,3 @@ function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
     </div>
   );
 }
-
-export default TikTokAdsPageClient;

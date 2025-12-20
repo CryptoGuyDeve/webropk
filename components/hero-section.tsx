@@ -5,6 +5,7 @@ import { HeroHeader } from "./header";
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { ChevronRight } from "lucide-react";
+import { LatestBlogs } from "@/components/home/latest-blogs";
 
 // Sliding banner images - replace these paths with your actual images
 const bannerImages = [
@@ -280,6 +281,9 @@ export default function HeroSection() {
             </div>
           </div>
         </section>
+
+        {/* Latest Blogs Section */}
+        <LatestBlogs />
       </main>
 
       <style jsx>{`

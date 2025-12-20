@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/footer";
 
@@ -155,24 +155,39 @@ const layout = ({ children }: { children: React.ReactNode }) => {
                 {/* Buttons - Outline (Black/White), Solid (Yellow) */}
                 <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit lg:border-l lg:pl-6 border-zinc-200 dark:border-zinc-800">
                   {session ? (
-                    <Button
-                      asChild
-                      size="sm"
-                      className={cn(
-                        YELLOW_BG,
-                        YELLOW_HOVER_BG,
-                        "text-black",
-                        YELLOW_RING
-                      )}
-                    >
-                      <Link
-                        href={`/dashboard/${(
-                          session.user?.name || "me"
-                        ).toLowerCase()}`}
+                    <>
+                      <Button
+                        asChild
+                        size="sm"
+                        className={cn(
+                          YELLOW_BG,
+                          YELLOW_HOVER_BG,
+                          "text-black",
+                          YELLOW_RING
+                        )}
                       >
-                        Dashboard
-                      </Link>
-                    </Button>
+                        <Link
+                          href={
+                            (session.user as any)?.role === "admin"
+                              ? "/admin"
+                              : (session.user as any)?.role === "staff"
+                                ? "/staff/dashboard"
+                                : `/dashboard/${(
+                                  session.user?.name || "me"
+                                ).toLowerCase()}`
+                          }
+                        >
+                          Dashboard
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                      >
+                        Logout
+                      </Button>
+                    </>
                   ) : (
                     <>
                       {/* Login Button (Outline) */}
