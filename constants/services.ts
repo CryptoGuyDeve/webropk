@@ -7,4 +7,5 @@ export const SERVICE_LIST = [
   { slug: "gfx-design", title: "GFX Design" },
   { slug: "digital-marketing", title: "Digital Marketing" },
   { slug: "full-business-marketing", title: "Full Business Marketing" },
+  { slug: "web-development", title: "Web Development" },
 ];

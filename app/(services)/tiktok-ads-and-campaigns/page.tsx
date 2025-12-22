@@ -25,10 +25,14 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useIntercom } from "@/hooks/use-intercom";
+import { useServiceOrder } from "@/hooks/use-service-order";
+import { useSession } from "next-auth/react";
 
 // This component is now the client-side implementation, previously named TikTokAdsPage
 function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
   const { openIntercom, openIntercomWithMessage } = useIntercom();
+  const { createOrderAndContact } = useServiceOrder();
+  const { data: session } = useSession();
   return (
     <div className="min-h-screen bg-background selection:bg-pink-100 selection:text-pink-900">
       {/* ==================== HERO SECTION ==================== */}
@@ -297,7 +301,15 @@ function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
                 <Button
                   className="w-full"
                   variant="outline"
-                  onClick={() => openIntercomWithMessage("Hi, I'm interested in the Starter TikTok Ads Package ($350/mo).")}
+                  onClick={() => createOrderAndContact(
+                    {
+                      serviceName: "TikTok Ads & Campaigns",
+                      packageType: "Starter Package",
+                      price: "350"
+                    },
+                    session?.user?.email,
+                    session?.user?.name
+                  )}
                 >
                   Select Starter
                 </Button>
@@ -338,7 +350,15 @@ function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
               <CardFooter>
                 <Button
                   className="w-full bg-cyan-500 hover:bg-cyan-600 text-white"
-                  onClick={() => openIntercomWithMessage("Hi, I'm interested in the Viral TikTok Ads Package ($700/mo).")}
+                  onClick={() => createOrderAndContact(
+                    {
+                      serviceName: "TikTok Ads & Campaigns",
+                      packageType: "Viral Package",
+                      price: "700"
+                    },
+                    session?.user?.email,
+                    session?.user?.name
+                  )}
                 >
                   Select Viral
                 </Button>
@@ -375,7 +395,15 @@ function TikTokAdsPageClient({ data: serviceData }: { data: any }) {
                 <Button
                   className="w-full"
                   variant="outline"
-                  onClick={() => openIntercomWithMessage("Hi, I'm interested in the Influencer TikTok Ads Package ($1400/mo).")}
+                  onClick={() => createOrderAndContact(
+                    {
+                      serviceName: "TikTok Ads & Campaigns",
+                      packageType: "Influencer Package",
+                      price: "1400"
+                    },
+                    session?.user?.email,
+                    session?.user?.name
+                  )}
                 >
                   Select Influencer
                 </Button>

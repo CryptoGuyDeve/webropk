@@ -5,6 +5,8 @@ import {
   timestamp,
   boolean,
   jsonb,
+  integer,
+  decimal,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -52,5 +54,19 @@ export const services = pgTable("services", {
   features: jsonb("features"),
   packages: jsonb("packages"),
   content: jsonb("content"), // Generic content sections if needed
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const serviceOrders = pgTable("service_orders", {
+  id: serial("id").primaryKey(),
+  userEmail: text("user_email").notNull(),
+  userName: text("user_name"),
+  serviceName: text("service_name").notNull(),
+  packageType: text("package_type").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  status: text("status").notNull().default("pending"), // pending, in_process_dealing, started, half_done, done, canceled
+  progress: integer("progress").default(0), // 0-100
+  notes: text("notes"), // Admin notes
+  createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -146,15 +146,9 @@ export const HeroHeader = () => {
                     )}
                   >
                     <Link
-                      href={
-                        (session.user as any)?.role === "admin"
-                          ? "/admin"
-                          : (session.user as any)?.role === "staff"
-                            ? "/staff/dashboard"
-                            : `/dashboard/${(
-                              session.user?.name || "me"
-                            ).toLowerCase()}`
-                      }
+                      href={`/dashboard/${(
+                        session.user?.name || "me"
+                      ).toLowerCase()}`}
                     >
                       Dashboard
                     </Link>
@@ -199,15 +193,9 @@ export const HeroHeader = () => {
                   <>
                     <Button asChild className={cn(YELLOW_BG, "text-black")}>
                       <Link
-                        href={
-                          (session.user as any)?.role === "admin"
-                            ? "/admin"
-                            : (session.user as any)?.role === "staff"
-                              ? "/staff/dashboard"
-                              : `/dashboard/${(
-                                session.user?.name || "me"
-                              ).toLowerCase()}`
-                        }
+                        href={`/dashboard/${(
+                          session.user?.name || "me"
+                        ).toLowerCase()}`}
                       >
                         Dashboard
                       </Link>

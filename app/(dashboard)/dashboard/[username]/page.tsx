@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, use, useState } from "react";
 import React from "react";
 import { getUser } from "@/actions/user";
+import { getUserServiceOrders } from "@/actions/service-orders";
 import {
   User,
   Mail,
@@ -17,6 +18,8 @@ import {
   Users,
   Calendar,
   MoreVertical,
+  ShoppingBag,
+  DollarSign,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +34,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { ServiceOrderCard } from "@/components/dashboard/service-order-card";
 
 // --- Theme Definition ---
 const PRIMARY_GOLD = "hsl(40, 80%, 55%)";
@@ -57,15 +61,27 @@ export default function DashboardPage({ params }: DashboardPageProps) {
   const [viewer, setViewer] = useState<UserProfile | null | undefined>(
     undefined
   );
+  const [serviceOrders, setServiceOrders] = useState<any[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
 
   useEffect(() => {
     async function fetchUser() {
       try {
         const user = await getUser(username);
         setViewer(user);
+
+        // Fetch service orders if user exists
+        if (user?.email) {
+          const ordersResult = await getUserServiceOrders(user.email);
+          if (ordersResult.success) {
+            setServiceOrders(ordersResult.data || []);
+          }
+        }
       } catch (error) {
         console.error(error);
         setViewer(null);
+      } finally {
+        setIsLoadingOrders(false);
       }
     }
     fetchUser();
@@ -144,32 +160,32 @@ export default function DashboardPage({ params }: DashboardPageProps) {
         {/* Stats Grid */}
         <div className="mb-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <StatsCard
-            title="Total Projects"
-            value="12"
-            icon={Briefcase}
-            trend="+2.5%"
-            description="from last month"
+            title="Total Orders"
+            value={serviceOrders.length.toString()}
+            icon={ShoppingBag}
+            trend={serviceOrders.length > 0 ? `${serviceOrders.length} services` : "No orders"}
+            description="purchased"
           />
           <StatsCard
-            title="Active Tasks"
-            value="24"
+            title="Active Services"
+            value={serviceOrders.filter(o => !["done", "canceled"].includes(o.status)).length.toString()}
             icon={Activity}
-            trend="+12%"
-            description="completed this week"
+            trend={`${serviceOrders.filter(o => o.status === "done").length} completed`}
+            description="in progress"
           />
           <StatsCard
-            title="Team Members"
-            value="8"
-            icon={Users}
-            trend="+1"
-            description="new invite pending"
+            title="Completed"
+            value={serviceOrders.filter(o => o.status === "done").length.toString()}
+            icon={TrendingUp}
+            trend={serviceOrders.filter(o => o.status === "done").length > 0 ? "+100%" : "0%"}
+            description="success rate"
           />
           <StatsCard
-            title="Revenue"
-            value="$4,250"
-            icon={CreditCard}
-            trend="+8%"
-            description="this month"
+            title="Total Spent"
+            value={`$${serviceOrders.reduce((sum, o) => sum + parseFloat(o.price || "0"), 0).toFixed(2)}`}
+            icon={DollarSign}
+            trend={serviceOrders.length > 0 ? `${serviceOrders.length} orders` : "$0"}
+            description="invested"
           />
         </div>
 
@@ -253,44 +269,60 @@ export default function DashboardPage({ params }: DashboardPageProps) {
             </Card>
           </div>
 
-          {/* Right Column: Activity & Projects */}
+          {/* Right Column: Service Orders */}
           <div className="space-y-8 lg:col-span-2">
-            {/* Recent Activity */}
+            {/* My Service Orders */}
             <Card className="border-zinc-200/60 bg-white/70 shadow-sm backdrop-blur-sm dark:border-zinc-800/60 dark:bg-zinc-900/50">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Recent Activity</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <ShoppingBag className="h-5 w-5 text-[#CCAA33]" />
+                      My Service Orders
+                    </CardTitle>
                     <CardDescription>
-                      Latest updates from your team
+                      Track your purchased services and their progress
                     </CardDescription>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-xs">
-                    View All
-                  </Button>
+                  <Badge variant="outline" className="bg-[#CCAA33]/10 text-[#CCAA33] border-[#CCAA33]/30">
+                    {serviceOrders.length} {serviceOrders.length === 1 ? "Order" : "Orders"}
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <ActivityItem
-                    icon={Briefcase}
-                    title="New Project Created"
-                    desc="You started the 'Marketing Campaign' project"
-                    time="2 hours ago"
-                  />
-                  <ActivityItem
-                    icon={Users}
-                    title="Team Meeting"
-                    desc="Joined the weekly sync with Design team"
-                    time="5 hours ago"
-                  />
-                  <ActivityItem
-                    icon={CreditCard}
-                    title="Subscription Updated"
-                    desc="Upgraded to the Pro Plan successfully"
-                    time="1 day ago"
-                  />
-                </div>
+                {isLoadingOrders ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-[#CCAA33]"></div>
+                      <p className="text-sm text-zinc-500">Loading your orders...</p>
+                    </div>
+                  </div>
+                ) : serviceOrders.length > 0 ? (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {serviceOrders.map((order, index) => (
+                      <ServiceOrderCard key={order.id} order={order} index={index} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
+                      <ShoppingBag className="h-8 w-8 text-zinc-400" />
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                      No Orders Yet
+                    </h3>
+                    <p className="mb-6 text-sm text-zinc-500 dark:text-zinc-400 max-w-sm">
+                      You haven't purchased any services yet. Browse our services and get started!
+                    </p>
+                    <Button
+                      onClick={() => router.push("/service")}
+                      className={cn("text-black hover:bg-yellow-500/90", YELLOW_BG)}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Browse Services
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

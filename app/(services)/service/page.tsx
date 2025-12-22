@@ -17,6 +17,7 @@ import {
   Zap,
   Sparkles,
   TrendingUp,
+  Code2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -103,6 +104,17 @@ const ALL_SERVICES = [
     gradient: "from-rose-400 to-pink-600",
     iconColor: "text-rose-500",
     glowColor: "shadow-rose-500/50",
+  },
+  {
+    title: "Web Development",
+    description: "Custom web applications with modern tech stack and scalable architecture.",
+    icon: <Code2 className="w-10 h-10" />,
+    price: "$2,500",
+    link: "/web-development",
+    features: ["Full Stack Development", "Modern UI/UX", "Cloud Deployment"],
+    gradient: "from-blue-500 to-purple-600",
+    iconColor: "text-blue-600",
+    glowColor: "shadow-blue-500/50",
   },
   {
     title: "Digital Marketing",

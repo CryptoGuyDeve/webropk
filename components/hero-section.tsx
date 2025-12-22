@@ -1,10 +1,12 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { HeroHeader } from "./header";
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ExternalLink, Calendar, Users, Code } from "lucide-react";
 import { LatestBlogs } from "@/components/home/latest-blogs";
 
 // Sliding banner images - replace these paths with your actual images
@@ -22,32 +24,194 @@ const companyProjects = [
     title: "E-Commerce Platform",
     logo: "/project-logo-1.png",
     description: "Modern shopping experience",
+    detailedInfo: {
+      fullDescription: "A comprehensive e-commerce solution with advanced features including real-time inventory management, AI-powered recommendations, and seamless payment integration.",
+      techStack: ["Next.js", "TypeScript", "Stripe", "PostgreSQL"],
+      completionDate: "December 2024",
+      client: "RetailCo Inc.",
+      link: "/projects/ecommerce-platform"
+    }
   },
   {
     id: 2,
     title: "FinTech Solution",
     logo: "/project-logo-2.png",
     description: "Secure payment processing",
+    detailedInfo: {
+      fullDescription: "Enterprise-grade financial technology platform featuring multi-currency support, fraud detection, and compliance with international banking standards.",
+      techStack: ["React", "Node.js", "MongoDB", "AWS"],
+      completionDate: "November 2024",
+      client: "FinanceHub Ltd.",
+      link: "/projects/fintech-solution"
+    }
   },
   {
     id: 3,
     title: "Healthcare App",
     logo: "/project-logo-3.png",
     description: "Patient care management",
+    detailedInfo: {
+      fullDescription: "HIPAA-compliant healthcare management system with telemedicine capabilities, electronic health records, and appointment scheduling.",
+      techStack: ["React Native", "Firebase", "Python", "TensorFlow"],
+      completionDate: "October 2024",
+      client: "MediCare Solutions",
+      link: "/projects/healthcare-app"
+    }
   },
   {
     id: 4,
     title: "Analytics Dashboard",
     logo: "/project-logo-4.png",
     description: "Real-time data insights",
+    detailedInfo: {
+      fullDescription: "Advanced analytics platform with customizable dashboards, real-time data visualization, and predictive analytics powered by machine learning.",
+      techStack: ["Vue.js", "D3.js", "GraphQL", "Redis"],
+      completionDate: "September 2024",
+      client: "DataViz Corp.",
+      link: "/projects/analytics-dashboard"
+    }
   },
   {
     id: 5,
     title: "Social Network",
     logo: "/project-logo-5.png",
     description: "Connect and collaborate",
+    detailedInfo: {
+      fullDescription: "Modern social networking platform with real-time messaging, content sharing, and community building features designed for professional collaboration.",
+      techStack: ["Next.js", "Socket.io", "Redis", "S3"],
+      completionDate: "August 2024",
+      client: "ConnectPro",
+      link: "/projects/social-network"
+    }
+  },
+  {
+    id: 6,
+    title: "AI Content Generator",
+    logo: "/project-logo-6.png",
+    description: "Intelligent content creation",
+    detailedInfo: {
+      fullDescription: "AI-powered content generation platform utilizing advanced language models to create high-quality marketing copy, blog posts, and social media content.",
+      techStack: ["Python", "FastAPI", "OpenAI", "React"],
+      completionDate: "July 2024",
+      client: "ContentAI Inc.",
+      link: "/projects/ai-content-generator"
+    }
   },
 ];
+
+// Project Card Component with Hover Dropdown
+function ProjectCard({ project }: { project: typeof companyProjects[0] }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div
+      className="group relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Main Card */}
+      <div className="relative flex h-full flex-col items-center gap-4 rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
+        {/* Logo */}
+        <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-1 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-lg group-hover:shadow-primary/20">
+          <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-background">
+            <img
+              src={project.logo}
+              alt={`${project.title} logo`}
+              className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-110"
+              onError={(e) => {
+                // Fallback to a placeholder if image fails to load
+                e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3Cline x1='15' y1='9' x2='9' y2='15'/%3E%3C/svg%3E";
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Title and Short Description */}
+        <div className="text-center">
+          <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary">
+            {project.title}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {project.description}
+          </p>
+        </div>
+
+        {/* Hover Indicator */}
+        <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <span>Hover for details</span>
+          <ChevronRight className="h-3 w-3" />
+        </div>
+      </div>
+
+      {/* Dropdown Menu - Appears on Hover */}
+      <div
+        className={`absolute left-0 right-0 top-full z-50 mt-2 origin-top transform transition-all duration-300 ease-out ${isHovered
+            ? "pointer-events-auto translate-y-0 opacity-100 scale-100"
+            : "pointer-events-none -translate-y-4 opacity-0 scale-95"
+          }`}
+      >
+        <div className="rounded-2xl border border-border/50 bg-card/95 p-6 shadow-2xl backdrop-blur-xl">
+          {/* Full Description */}
+          <p className="text-sm leading-relaxed text-foreground/90">
+            {project.detailedInfo.fullDescription}
+          </p>
+
+          {/* Tech Stack */}
+          <div className="mt-4">
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <Code className="h-3.5 w-3.5" />
+              <span>Tech Stack</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {project.detailedInfo.techStack.map((tech, index) => (
+                <span
+                  key={index}
+                  className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Project Details Grid */}
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            {/* Completion Date */}
+            <div className="flex items-start gap-2">
+              <Calendar className="mt-0.5 h-4 w-4 text-primary" />
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">Completed</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {project.detailedInfo.completionDate}
+                </p>
+              </div>
+            </div>
+
+            {/* Client */}
+            <div className="flex items-start gap-2">
+              <Users className="mt-0.5 h-4 w-4 text-primary" />
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">Client</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {project.detailedInfo.client}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* View Project Link */}
+          <Link
+            href={project.detailedInfo.link}
+            className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25"
+          >
+            <span>View Project</span>
+            <ExternalLink className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function HeroSection() {
   return (
@@ -236,48 +400,15 @@ export default function HeroSection() {
             <div className="mb-12 text-center">
               <h2 className="text-3xl font-bold md:text-4xl">Our Projects</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                Innovative solutions we've built
+                Innovative solutions we've built for our clients
               </p>
             </div>
 
-            <div className="relative overflow-hidden py-8">
-              <InfiniteSlider speedOnHover={15} speed={30} gap={48}>
-                {companyProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="group flex min-w-[280px] flex-col items-center gap-4 rounded-2xl border border-border/50 bg-card/50 p-6 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-primary/50 hover:shadow-lg"
-                  >
-                    <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-1 transition-all duration-300 group-hover:border-primary/50 group-hover:shadow-lg group-hover:shadow-primary/20">
-                      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-background">
-                        <img
-                          src={project.logo}
-                          alt={`${project.title} logo`}
-                          className="h-12 w-12 object-contain transition-transform duration-300 group-hover:scale-110"
-                        />
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary">
-                        {project.title}
-                      </h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {project.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </InfiniteSlider>
-
-              <ProgressiveBlur
-                className="pointer-events-none absolute left-0 top-0 h-full w-24"
-                direction="left"
-                blurIntensity={1}
-              />
-              <ProgressiveBlur
-                className="pointer-events-none absolute right-0 top-0 h-full w-24"
-                direction="right"
-                blurIntensity={1}
-              />
+            {/* Static Grid Layout */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+              {companyProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
             </div>
           </div>
         </section>

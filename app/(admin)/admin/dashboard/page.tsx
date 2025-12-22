@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { adminUsers, staffUsers } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { adminUsers, staffUsers, serviceOrders } from "@/lib/db/schema";
+import { eq, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { DashboardView } from "@/components/admin/dashboard-view";
 import { getBlogs } from "@/actions/blog";
@@ -34,11 +34,18 @@ export default async function AdminDashboardPage() {
   const blogsResult = await getBlogs(true);
   const blogs = blogsResult.data || [];
 
+  // Fetch all service orders
+  const allServiceOrders = await db
+    .select()
+    .from(serviceOrders)
+    .orderBy(desc(serviceOrders.createdAt));
+
   return (
     <DashboardView
       admins={allAdmins}
       staff={allStaff}
       blogs={blogs}
+      serviceOrders={allServiceOrders}
       currentUser={session.user}
     />
   );

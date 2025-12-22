@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +20,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Shield, ShieldCheck, Users, Lock, LayoutDashboard, FileText, Settings, UserCog } from "lucide-react";
+import { Shield, ShieldCheck, Users, Lock, LayoutDashboard, FileText, Settings, UserCog, ShoppingBag, LogOut } from "lucide-react";
 import { BlogManager } from "./blog-manager";
 import { StaffManager } from "./staff-manager";
+import { ServiceOrdersView } from "./service-orders-view";
 import { cn } from "@/lib/utils";
 
 // --- Theme Definition ---
@@ -32,11 +34,12 @@ interface DashboardViewProps {
     admins: any[];
     staff: any[];
     blogs: any[];
+    serviceOrders: any[];
     currentUser: any;
 }
 
-export function DashboardView({ admins, staff, blogs, currentUser }: DashboardViewProps) {
-    const [activeTab, setActiveTab] = useState<"overview" | "blogs" | "staff">("overview");
+export function DashboardView({ admins, staff, blogs, serviceOrders, currentUser }: DashboardViewProps) {
+    const [activeTab, setActiveTab] = useState<"overview" | "blogs" | "staff" | "orders">("overview");
 
     return (
         <div className="min-h-screen bg-zinc-50/50 dark:bg-zinc-950 p-6 md:p-8">
@@ -52,7 +55,7 @@ export function DashboardView({ admins, staff, blogs, currentUser }: DashboardVi
                             Manage authorized administrators, content, and settings.
                         </p>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                         <Badge
                             variant="outline"
                             className="border-green-200 bg-green-50 text-green-700 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400"
@@ -60,6 +63,20 @@ export function DashboardView({ admins, staff, blogs, currentUser }: DashboardVi
                             <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-2 animate-pulse"></span>
                             System Operational
                         </Badge>
+                        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+                            <span className="text-xs text-zinc-600 dark:text-zinc-400">
+                                {currentUser?.email}
+                            </span>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => signOut({ callbackUrl: "/" })}
+                            className="gap-2"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            Logout
+                        </Button>
                     </div>
                 </div>
 
@@ -72,6 +89,14 @@ export function DashboardView({ admins, staff, blogs, currentUser }: DashboardVi
                     >
                         <LayoutDashboard className="h-4 w-4" />
                         Overview
+                    </Button>
+                    <Button
+                        variant={activeTab === "orders" ? "secondary" : "ghost"}
+                        onClick={() => setActiveTab("orders")}
+                        className="gap-2"
+                    >
+                        <ShoppingBag className="h-4 w-4" />
+                        Service Orders
                     </Button>
                     <Button
                         variant={activeTab === "blogs" ? "secondary" : "ghost"}
@@ -187,6 +212,12 @@ export function DashboardView({ admins, staff, blogs, currentUser }: DashboardVi
                                     </Table>
                                 </CardContent>
                             </Card>
+                        </div>
+                    )}
+
+                    {activeTab === "orders" && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <ServiceOrdersView orders={serviceOrders} />
                         </div>
                     )}
 
