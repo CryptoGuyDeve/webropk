@@ -52,10 +52,10 @@ interface ServiceOrder {
     packageType: string;
     price: string;
     status: string;
-    progress: number;
+    progress: number | null;
     notes: string | null;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: Date | null;
+    updatedAt: Date | null;
 }
 
 interface ServiceOrdersViewProps {
@@ -291,11 +291,11 @@ export function ServiceOrdersView({ orders: initialOrders }: ServiceOrdersViewPr
                                                         <div className="w-16 h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                                                             <div
                                                                 className="h-full bg-[#CCAA33] transition-all duration-500"
-                                                                style={{ width: `${order.progress}%` }}
+                                                                style={{ width: `${order.progress ?? 0}%` }}
                                                             />
                                                         </div>
                                                         <span className="text-xs text-muted-foreground">
-                                                            {order.progress}%
+                                                            {order.progress ?? 0}%
                                                         </span>
                                                     </div>
                                                 </TableCell>
@@ -338,7 +338,7 @@ export function ServiceOrdersView({ orders: initialOrders }: ServiceOrdersViewPr
                                                 <TableCell className="text-xs text-muted-foreground">
                                                     <div className="flex items-center gap-1">
                                                         <Calendar className="h-3 w-3" />
-                                                        {new Date(order.createdAt).toLocaleDateString()}
+                                                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
                                                     </div>
                                                 </TableCell>
                                             </motion.tr>
